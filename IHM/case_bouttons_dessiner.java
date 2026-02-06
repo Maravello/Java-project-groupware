@@ -1,3 +1,4 @@
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -5,6 +6,7 @@ import javax.swing.*;
 
 // Fenêtre principale modifiée pour accepter les flux
 class FenBoutonsDyn extends JFrame implements ActionListener {
+
     final int NBOUTONS = 3;
     private JButton tabBout[];
     private JCheckBox coche;
@@ -46,7 +48,9 @@ class FenBoutonsDyn extends JFrame implements ActionListener {
         Object source0 = ev.getSource();
         if (source0 == coche) {
             if (coche.isSelected()) {
-                for (int i = 0; i < NBOUTONS; i++) tabBout[i].setEnabled(true);
+                for (int i = 0; i < NBOUTONS; i++) {
+                    tabBout[i].setEnabled(true);
+                }
             }
         } else {
             JButton source = (JButton) ev.getSource();
@@ -58,7 +62,9 @@ class FenBoutonsDyn extends JFrame implements ActionListener {
             }
             if (source == tabBout[2]) {
                 // On crée la fenêtre de chat avec le flux de sortie
-                if (fenChat == null) fenChat = new FenText(out);
+                if (fenChat == null) {
+                    fenChat = new FenText(out);
+                }
                 fenChat.setVisible(true);
             }
             source.setEnabled(false);
@@ -68,6 +74,7 @@ class FenBoutonsDyn extends JFrame implements ActionListener {
 
 // Fenêtre de Chat modifiée
 class FenText extends JFrame implements ActionListener {
+
     private JTextField saisie;
     private JTextArea historique;
     private PrintWriter out;
@@ -88,16 +95,17 @@ class FenText extends JFrame implements ActionListener {
         contenu.add(saisie, BorderLayout.SOUTH);
     }
 
-    public void ajouterMessage(String msg) {
-        historique.append("L'autre : " + msg + "\n");
-    }
-
+    // Dans la classe FenText
     public void actionPerformed(ActionEvent e) {
         String texte = saisie.getText();
         if (!texte.isEmpty()) {
-            out.println(texte); // Envoi au réseau
-            historique.append("Moi : " + texte + "\n");
-            saisie.setText("");
+            out.println(texte); // Envoi au serveur qui va le diffuser à TOUT LE MONDE
+            saisie.setText(""); // On vide juste le champ de saisie
         }
+    }
+
+// Méthode à ajouter dans FenText pour recevoir les messages du serveur
+    public void ajouterMessage(String msg) {
+        historique.append(msg + "\n");
     }
 }
