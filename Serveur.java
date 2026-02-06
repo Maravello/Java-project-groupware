@@ -14,16 +14,18 @@ public class Serveur {
         Socket client = serverSocket.accept();
         System.out.println("Client connecté");
 
+        //Lire le serveur
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(client.getInputStream())
         );
 
+        //envoyer le message
         PrintWriter out = new PrintWriter(
                 new BufferedWriter(
                         new OutputStreamWriter(client.getOutputStream())
                 ), true
         );
-
+//permet de lire le contenu du clavier
         Scanner clavier = new Scanner(System.in);
 
         // Thread RÉCEPTION (client → écran)
