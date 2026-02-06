@@ -1,39 +1,65 @@
 import java.io.*;
 import java.net.*;
 
-//Classe principale
 public class Serveur {
 
-   //Définission du port sur lequelle on veut que les client passe
-   static final int port = 8080;
+    static final int port = 8080;
 
-   public static void main(String[] args) throws Exception {
-    //Instanciation avec la classe ServerSocket
-     ServerSocket s = new ServerSocket(port);
-     Socket soc = s.accept();
+    public static void main(String[] args) throws Exception {
 
+        ServerSocket serverSocket = new ServerSocket(port);
+        System.out.println("Serveur en attente sur le port " + port + "...");
 
-        // Un BufferedReader permet de lire par ligne.
-        BufferedReader plec = new BufferedReader(
-                               new InputStreamReader(soc.getInputStream())
-                              );
+        Socket client = serverSocket.accept();
+        System.out.println("Client connecté");
 
-        // Un PrintWriter possede toutes les operations print classiques.
-        // En mode auto-flush, le tampon est vid� (flush) � l appel de println.
-        PrintWriter pred = new PrintWriter(
-                             new BufferedWriter(
-                                new OutputStreamWriter(soc.getOutputStream())),
-                             true);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(client.getInputStream())
+        );
 
-       //Boucle infin                      
-        while (true) {
-           String str = plec.readLine();          // lecture du message
-           if (str.equals("END")) break;
-           System.out.println("ECHO = " + str);   // trace locale
-           pred.println(str);                     // renvoi d'un echo
-        }
-        plec.close();
-        pred.close();
-        soc.close();
-   }
+        PrintWriter out = new PrintWriter(
+                new BufferedWriter(
+                        new OutputStreamWriter(client.getOutputStream())
+                ), true
+        );
+
+        // Thread de réception (ce que le client envoie)
+        Thread recevoir = new Thread(() -> {
+            try {
+                String msg;
+                while ((msg = in.readLine()) != null) {
+                    System.out.println("Reçu du client : " + msg);
+                    if (msg.equals("END")) break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        // Thread d'envoi (ce que le serveur envoie)
+        Thread envoyer = new Thread(() -> {
+            try {
+                for (int i = 0; i < 10; i++) {
+                    out.println("Message serveur " + i);
+                    Thread.sleep(500);
+                }
+                out.println("END");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        recevoir.start();
+        envoyer.start();
+
+        recevoir.join();
+        envoyer.join();
+
+        in.close();
+        out.close();
+        client.close();
+        serverSocket.close();
+
+        System.out.println("Serveur terminé");
+    }
 }
