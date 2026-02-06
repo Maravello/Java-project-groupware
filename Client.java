@@ -1,60 +1,66 @@
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
-public class Serveur {
+public class Client {
 
     static final int port = 8080;
 
     public static void main(String[] args) throws Exception {
 
-        ServerSocket serverSocket = new ServerSocket(port);
-        System.out.println("Serveur en attente...");
+        if (args.length < 1) {
+            System.out.println("Usage : java Client <adresse_serveur>");
+            return;
+        }
 
-        Socket client = serverSocket.accept();
-        System.out.println("Client connecté");
+        Socket socket = new Socket(args[0], port);
+        System.out.println("Connecté au serveur");
 
         BufferedReader in = new BufferedReader(
-                new InputStreamReader(client.getInputStream())
+                new InputStreamReader(socket.getInputStream())
         );
 
         PrintWriter out = new PrintWriter(
                 new BufferedWriter(
-                        new OutputStreamWriter(client.getOutputStream())
+                        new OutputStreamWriter(socket.getOutputStream())
                 ), true
         );
 
+        Scanner clavier = new Scanner(System.in);
+
+        // Thread ENVOI (clavier → serveur)
+        Thread envoyer = new Thread(() -> {
+            try {
+                while (true) {
+                    String msg = clavier.nextLine();
+                    out.println(msg);
+                    if (msg.equalsIgnoreCase("END")) break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        // Thread RÉCEPTION (serveur → écran)
         Thread recevoir = new Thread(() -> {
             try {
                 String msg;
                 while ((msg = in.readLine()) != null) {
-                    System.out.println("Reçu du client : " + msg);
-                    if (msg.equals("END")) break;
+                    System.out.println("Serveur : " + msg);
+                    if (msg.equalsIgnoreCase("END")) break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-        Thread envoyer = new Thread(() -> {
-            try {
-                for (int i = 0; i < 10; i++) {
-                    out.println("Message serveur " + i);
-                    Thread.sleep(500);
-                }
-                out.println("END");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        recevoir.start();
         envoyer.start();
+        recevoir.start();
 
-        recevoir.join();
         envoyer.join();
+        recevoir.join();
 
-        client.close();
-        serverSocket.close();
-        System.out.println("Serveur terminé");
+        socket.close();
+        System.out.println("Client déconnecté");
     }
 }

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class Serveur {
 
@@ -8,7 +9,7 @@ public class Serveur {
     public static void main(String[] args) throws Exception {
 
         ServerSocket serverSocket = new ServerSocket(port);
-        System.out.println("Serveur en attente sur le port " + port + "...");
+        System.out.println("Serveur en attente...");
 
         Socket client = serverSocket.accept();
         System.out.println("Client connecté");
@@ -23,27 +24,29 @@ public class Serveur {
                 ), true
         );
 
-        // Thread de réception (ce que le client envoie)
+        Scanner clavier = new Scanner(System.in);
+
+        // Thread RÉCEPTION (client → écran)
         Thread recevoir = new Thread(() -> {
             try {
                 String msg;
                 while ((msg = in.readLine()) != null) {
-                    System.out.println("Reçu du client : " + msg);
-                    if (msg.equals("END")) break;
+                    System.out.println("Client : " + msg);
+                    if (msg.equalsIgnoreCase("END")) break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-        // Thread d'envoi (ce que le serveur envoie)
+        // Thread ENVOI (clavier → client)
         Thread envoyer = new Thread(() -> {
             try {
-                for (int i = 0; i < 10; i++) {
-                    out.println("Message serveur " + i);
-                    Thread.sleep(500);
+                while (true) {
+                    String msg = clavier.nextLine();
+                    out.println(msg);
+                    if (msg.equalsIgnoreCase("END")) break;
                 }
-                out.println("END");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -55,11 +58,8 @@ public class Serveur {
         recevoir.join();
         envoyer.join();
 
-        in.close();
-        out.close();
         client.close();
         serverSocket.close();
-
-        System.out.println("Serveur terminé");
+        System.out.println("Serveur arrêté");
     }
 }
