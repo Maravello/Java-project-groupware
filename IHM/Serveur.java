@@ -1,34 +1,21 @@
-import java.io.*;
 import java.net.*;
-import javax.swing.SwingUtilities;
 
 public class Serveur {
     static final int port = 8080;
 
     public static void main(String[] args) throws Exception {
         ServerSocket serverSocket = new ServerSocket(port);
-        System.out.println("Serveur en attente...");
-        Socket client = serverSocket.accept();
+        System.out.println("Serveur multi-clients en attente sur le port " + port + "...");
+        ChatManager chatManager = new ChatManager();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(client.getOutputStream())), true);
+        // Accepte les clients en boucle infinie
+        while (true) {
+            Socket client = serverSocket.accept();
+            System.out.println("Nouveau client connecté : " + client.getInetAddress());
 
-        // Lancement de l'IHM
-        SwingUtilities.invokeLater(() -> {
-            FenBoutonsDyn gui = new FenBoutonsDyn(out, in);
-            gui.setVisible(true);
-            
-            // Thread de réception qui met à jour l'IHM
-            new Thread(() -> {
-                try {
-                    String msg;
-                    while ((msg = in.readLine()) != null) {
-                        final String finalMsg = msg;
-                        SwingUtilities.invokeLater(() -> gui.diffuserMessage(finalMsg));
-                        if (msg.equalsIgnoreCase("END")) break;
-                    }
-                } catch (Exception e) { e.printStackTrace(); }
-            }).start();
-        });
+            // Crée un handler pour ce client et le démarre dans un thread séparé
+            ClientHandler handler = new ClientHandler(client, chatManager);
+            handler.start();
+        }
     }
 }
