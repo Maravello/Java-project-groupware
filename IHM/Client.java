@@ -15,7 +15,17 @@ public class Client {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
+        // Crée les flux pour la sérialisation des commandes de dessin
+        ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
+        objOut.flush();
+        ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
+
         SwingUtilities.invokeLater(() -> {
+            // Lance la fenêtre de dessin partagée
+            FenDessinPartagee dessinWindow = new FenDessinPartagee(objOut, objIn);
+            dessinWindow.setVisible(true);
+
+            // Lance aussi la fenêtre de chat
             FenBoutonsDyn gui = new FenBoutonsDyn(out, in);
             gui.setVisible(true);
 
