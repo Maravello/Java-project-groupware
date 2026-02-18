@@ -12,6 +12,11 @@ class FenBoutonsDyn extends JFrame implements ActionListener {
     private BufferedReader in;
     private FenText fenChat; // Instance unique pour le chat
 
+    // No-arg constructor delegates to main constructor for compatibility
+    public FenBoutonsDyn() {
+        this(null, null);
+    }
+
     public FenBoutonsDyn(PrintWriter out, BufferedReader in) {
         this.out = out;
         this.in = in;
@@ -51,7 +56,7 @@ class FenBoutonsDyn extends JFrame implements ActionListener {
         } else {
             JButton source = (JButton) ev.getSource();
             if (source == tabBout[0]) {
-                new Fenetre().setVisible(true);
+                new FenMenu().setVisible(true);
             }
             if (source == tabBout[1]) {
                 new FenMenu().setVisible(true);
