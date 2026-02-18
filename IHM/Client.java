@@ -3,7 +3,8 @@ import java.net.*;
 import javax.swing.SwingUtilities;
 
 public class Client {
-    static final int port = 8080;
+    static final int chatPort = 8080;
+    static final int drawingPort = 8081;
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
@@ -11,14 +12,20 @@ public class Client {
             return;
         }
 
-        Socket socket = new Socket(args[0], port);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+        String serverAddr = args[0];
 
-        // Crée les flux pour la sérialisation des commandes de dessin
-        ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
+        // Connexion 1 : Chat sur port 8080
+        Socket chatSocket = new Socket(serverAddr, chatPort);
+        BufferedReader in = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(chatSocket.getOutputStream())), true);
+        System.out.println("Connecté au serveur de chat sur " + serverAddr + ":" + chatPort);
+
+        // Connexion 2 : Dessin sur port 8081
+        Socket drawingSocket = new Socket(serverAddr, drawingPort);
+        ObjectOutputStream objOut = new ObjectOutputStream(drawingSocket.getOutputStream());
         objOut.flush();
-        ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
+        ObjectInputStream objIn = new ObjectInputStream(drawingSocket.getInputStream());
+        System.out.println("Connecté au serveur de dessin sur " + serverAddr + ":" + drawingPort);
 
         SwingUtilities.invokeLater(() -> {
             // Lance la fenêtre de dessin partagée

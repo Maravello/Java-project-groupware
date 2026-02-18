@@ -1,6 +1,10 @@
 import java.net.*;
+import java.util.*;
 
-public class Serveur {
+/**
+ * Gère deux ports : un pour le chat (8080) et un pour le dessin (8081).
+ */
+public class ServeurDual {
     static final int chatPort = 8080;
     static final int drawingPort = 8081;
 
