@@ -53,32 +53,36 @@ public class NetDrawClient extends JComponent {
 
         // Set up drop down boxes
         lineStyle.setRenderer(new ComboBoxCellRenderer(lineStyle));
-        lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(0), "A main levé"));
+        lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(0), "A main levÃ©"));
        //lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(1), "Line"));
         lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(2), "Rectangle"));
-        //lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(3), "Oval"));
+        lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(3), "Cercle"));
+        lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(2), "CarrÃ©"));
+        lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(4), "Triangle"));
+        lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(5), "Ã‰toile"));
         //lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(4), "Text"));
         //lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(5), "Pseudo-UML"));
         lineStyle.addItem(new ComboBoxItem(ImageStore.getImage(6), "Effacer zone"));
         
         lineColor.setRenderer(new ComboBoxCellRenderer(lineColor));
         lineColor.addItem(ImageStore.getColorItem("#000000"));
-        /*lineColor.addItem(ImageStore.getColorItem("#999999"));
-        lineColor.addItem(ImageStore.getColorItem("#ffffff"));*/
-        // cont
-        /*lineColor.addItem(ImageStore.getColorItem("#990000"));
-        lineColor.addItem(ImageStore.getColorItem("#009900"));
-        lineColor.addItem(ImageStore.getColorItem("#000099"));
-        lineColor.addItem(ImageStore.getColorItem("#999900"));
-        lineColor.addItem(ImageStore.getColorItem("#990099"));
-        lineColor.addItem(ImageStore.getColorItem("#009999"));*/
-        // cont
-	    lineColor.addItem(ImageStore.getColorItem("#ff0000"));
+        lineColor.addItem(ImageStore.getColorItem("#ffffff"));
+        lineColor.addItem(ImageStore.getColorItem("#ff0000"));
         lineColor.addItem(ImageStore.getColorItem("#00ff00"));
         lineColor.addItem(ImageStore.getColorItem("#0000ff"));
-        /*lineColor.addItem(ImageStore.getColorItem("#ffff00"));
+        lineColor.addItem(ImageStore.getColorItem("#ffff00"));
         lineColor.addItem(ImageStore.getColorItem("#ff00ff"));
-        lineColor.addItem(ImageStore.getColorItem("#00ffff"));*/
+        lineColor.addItem(ImageStore.getColorItem("#00ffff"));
+        
+        // Couleurs de fond
+        JComboBox backgroundColorBox = new JComboBox();
+        backgroundColorBox.setRenderer(new ComboBoxCellRenderer(backgroundColorBox));
+        backgroundColorBox.addItem(ImageStore.getColorItem("#ffffff"));
+        backgroundColorBox.addItem(ImageStore.getColorItem("#000000"));
+        backgroundColorBox.addItem(ImageStore.getColorItem("#cccccc"));
+        backgroundColorBox.addItem(ImageStore.getColorItem("#ffffcc"));
+        backgroundColorBox.addItem(ImageStore.getColorItem("#ccffcc"));
+        backgroundColorBox.addItem(ImageStore.getColorItem("#ccccff"));
 
         lineThickness.setRenderer(new ComboBoxCellRenderer(lineThickness));
         //lineThickness.addItem(ImageStore.getLineThicknessItem("1"));
@@ -117,8 +121,12 @@ public class NetDrawClient extends JComponent {
         inputText.setEnabled(false);
 
         JPanel graphicsToolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        graphicsToolBarPanel.add(new JLabel("Forme:"));
         graphicsToolBarPanel.add(lineStyle);
+        graphicsToolBarPanel.add(new JLabel("Couleur:"));
         graphicsToolBarPanel.add(lineColor);
+        graphicsToolBarPanel.add(new JLabel("Fond:"));
+        graphicsToolBarPanel.add(backgroundColorBox);
         //graphicsToolBarPanel.add(lineThickness);
        //graphicsToolBarPanel.add(antiAliasCheckBox);
        //graphicsToolBarPanel.add(filledCheckBox);
@@ -136,6 +144,22 @@ public class NetDrawClient extends JComponent {
         pane.add(graphicsOptions, BorderLayout.NORTH);
         pane.add(splitPane, BorderLayout.CENTER);
         pane.add(controlPanel, BorderLayout.SOUTH);
+        
+        // Listener pour changer la couleur de fond
+        backgroundColorBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String bgColor = backgroundColorBox.getSelectedItem().toString();
+                try {
+                    image.changeBackgroundColor(Color.decode(bgColor));
+                    bwriter.write("bgcolor " + Color.decode(bgColor).getRGB());
+                    bwriter.newLine();
+                    bwriter.flush();
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
         
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -196,7 +220,7 @@ public class NetDrawClient extends JComponent {
                     image.clearGraphics();
                 }
                 catch (IOException ie) {
-                    JOptionPane.showMessageDialog(null, "Impossible de se connecter à " + serverHostname + " sur le port 1515", "Probleme de connection", JOptionPane.ERROR_MESSAGE); 
+                    JOptionPane.showMessageDialog(null, "Impossible de se connecter ï¿½ " + serverHostname + " sur le port 1515", "Probleme de connection", JOptionPane.ERROR_MESSAGE); 
                 }
             }
         });

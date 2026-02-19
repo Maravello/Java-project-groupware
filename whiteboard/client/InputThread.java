@@ -1,10 +1,9 @@
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import java.awt.Color;
-import java.awt.BasicStroke;
 
 public class InputThread extends Thread {
 
@@ -47,7 +46,7 @@ public class InputThread extends Thread {
                 }
                 else if (type.equals("effacer")) {
                     String by = tokenizer.nextToken();
-                    textArea.append("* Dessin effac� par " + by + " .\r\n");
+                    textArea.append("* Dessin effac� par " + by + " .\r\n");
                     textArea.setCaretPosition(textArea.getText().length());
                     image.clearGraphics();
                 }
@@ -94,6 +93,74 @@ public class InputThread extends Thread {
                     }
                     catch (Exception e) {
                         System.out.println("Possible de perte de ovale: " + input);
+                    }
+                }
+                else if (type.equals("circle")) {
+                    try {
+                        int centerX = Integer.parseInt(tokenizer.nextToken());
+                        int centerY = Integer.parseInt(tokenizer.nextToken());
+                        int radius = Integer.parseInt(tokenizer.nextToken());
+                        Color color = new Color(Integer.parseInt(tokenizer.nextToken()));
+                        BasicStroke stroke = new BasicStroke(Float.parseFloat(tokenizer.nextToken()));
+                        boolean filled = Boolean.valueOf(tokenizer.nextToken()).booleanValue();
+                        image.drawBufferedCircle(centerX, centerY, radius, color, stroke, filled);
+                    }
+                    catch (Exception e) {
+                        System.out.println("Possible de perte de cercle: " + input);
+                    }
+                }
+                else if (type.equals("square")) {
+                    try {
+                        int x = Integer.parseInt(tokenizer.nextToken());
+                        int y = Integer.parseInt(tokenizer.nextToken());
+                        int size = Integer.parseInt(tokenizer.nextToken());
+                        Color color = new Color(Integer.parseInt(tokenizer.nextToken()));
+                        BasicStroke stroke = new BasicStroke(Float.parseFloat(tokenizer.nextToken()));
+                        boolean filled = Boolean.valueOf(tokenizer.nextToken()).booleanValue();
+                        image.drawBufferedSquare(x, y, size, color, stroke, filled);
+                    }
+                    catch (Exception e) {
+                        System.out.println("Possible de perte de carré: " + input);
+                    }
+                }
+                else if (type.equals("triangle")) {
+                    try {
+                        int x1 = Integer.parseInt(tokenizer.nextToken());
+                        int y1 = Integer.parseInt(tokenizer.nextToken());
+                        int x2 = Integer.parseInt(tokenizer.nextToken());
+                        int y2 = Integer.parseInt(tokenizer.nextToken());
+                        int x3 = Integer.parseInt(tokenizer.nextToken());
+                        int y3 = Integer.parseInt(tokenizer.nextToken());
+                        Color color = new Color(Integer.parseInt(tokenizer.nextToken()));
+                        BasicStroke stroke = new BasicStroke(Float.parseFloat(tokenizer.nextToken()));
+                        boolean filled = Boolean.valueOf(tokenizer.nextToken()).booleanValue();
+                        image.drawBufferedTriangle(x1, y1, x2, y2, x3, y3, color, stroke, filled);
+                    }
+                    catch (Exception e) {
+                        System.out.println("Possible de perte de triangle: " + input);
+                    }
+                }
+                else if (type.equals("star")) {
+                    try {
+                        int centerX = Integer.parseInt(tokenizer.nextToken());
+                        int centerY = Integer.parseInt(tokenizer.nextToken());
+                        int radius = Integer.parseInt(tokenizer.nextToken());
+                        Color color = new Color(Integer.parseInt(tokenizer.nextToken()));
+                        BasicStroke stroke = new BasicStroke(Float.parseFloat(tokenizer.nextToken()));
+                        boolean filled = Boolean.valueOf(tokenizer.nextToken()).booleanValue();
+                        image.drawBufferedStar(centerX, centerY, radius, color, stroke, filled);
+                    }
+                    catch (Exception e) {
+                        System.out.println("Possible de perte d'étoile: " + input);
+                    }
+                }
+                else if (type.equals("bgcolor")) {
+                    try {
+                        Color bgColor = new Color(Integer.parseInt(tokenizer.nextToken()));
+                        image.changeBackgroundColor(bgColor);
+                    }
+                    catch (Exception e) {
+                        System.out.println("Possible de perte de couleur de fond: " + input);
                     }
                 }
                 
