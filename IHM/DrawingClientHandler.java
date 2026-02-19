@@ -11,6 +11,7 @@ public class DrawingClientHandler extends Thread {
     private ObjectOutputStream out;
     private DrawingManager drawingManager;
     private String clientId;
+    private int clientColor;
     private static int clientCounter = 0;
     
     public DrawingClientHandler(Socket socket, DrawingManager drawingManager) throws IOException {
@@ -39,7 +40,7 @@ public class DrawingClientHandler extends Thread {
                 if (obj instanceof DrawingCommand) {
                     DrawingCommand cmd = (DrawingCommand) obj;
                     cmd = new DrawingCommand(cmd.getType(), cmd.getX1(), cmd.getY1(), 
-                                           cmd.getX2(), cmd.getY2(), cmd.getColor(), clientId);
+                                           cmd.getX2(), cmd.getY2(), cmd.getColor(), clientId, clientColor);
                     drawingManager.broadcastDrawingCommand(cmd);
                     System.out.println("[DrawingClientHandler] Commande reçue: " + cmd);
                 }
@@ -75,5 +76,19 @@ public class DrawingClientHandler extends Thread {
      */
     public String getClientId() {
         return clientId;
+    }
+    
+    /**
+     * Définit la couleur du client.
+     */
+    public void setClientColor(int color) {
+        this.clientColor = color;
+    }
+    
+    /**
+     * Retourne la couleur du client.
+     */
+    public int getClientColor() {
+        return clientColor;
     }
 }

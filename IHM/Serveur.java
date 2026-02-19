@@ -42,10 +42,11 @@ public class Serveur {
             }
         });
 
+        chatThread.setDaemon(false);
+        drawingThread.setDaemon(false);
         chatThread.start();
         drawingThread.start();
         
-        chatThread.join();
-        drawingThread.join();
+        System.out.println("Serveur PRÊT : Chat port " + chatPort + ", Dessin port " + drawingPort);
     }
 }

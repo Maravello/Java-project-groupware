@@ -19,6 +19,7 @@ public class DrawingCommand implements Serializable {
     private int x1, y1, x2, y2;
     private int color;
     private String clientId;
+    private int clientColor;  // Couleur unique attribuée au client
     
     public DrawingCommand(Type type, int x1, int y1, int x2, int y2, int color, String clientId) {
         this.type = type;
@@ -28,6 +29,18 @@ public class DrawingCommand implements Serializable {
         this.y2 = y2;
         this.color = color;
         this.clientId = clientId;
+        this.clientColor = color;
+    }
+    
+    public DrawingCommand(Type type, int x1, int y1, int x2, int y2, int color, String clientId, int clientColor) {
+        this.type = type;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.color = color;
+        this.clientId = clientId;
+        this.clientColor = clientColor;
     }
     
     public DrawingCommand(Type type, String clientId) {
@@ -43,6 +56,8 @@ public class DrawingCommand implements Serializable {
     public int getY2() { return y2; }
     public int getColor() { return color; }
     public String getClientId() { return clientId; }
+    public int getClientColor() { return clientColor; }
+    public void setClientColor(int clientColor) { this.clientColor = clientColor; }
     
     @Override
     public String toString() {
